@@ -102,7 +102,7 @@ export function getReadablePath(cwd: string, relPath?: string): string {
 	}
 }
 
-export const getWorkspacePath = (defaultCwdPath = "") => {
+export const getWorkspacePath = (defaultCwdPath = ""): string => {
 	const cwdPath = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) || defaultCwdPath
 	const currentFileUri = vscode.window.activeTextEditor?.document.uri
 	if (currentFileUri) {
@@ -113,15 +113,16 @@ export const getWorkspacePath = (defaultCwdPath = "") => {
 }
 
 export const isLocatedInWorkspace = (pathToCheck: string = ""): boolean => {
-	let normalizedCwd: string = path.normalize(getWorkspacePath())
-	let normalizedPath: string = path.normalize(path.resolve(normalizedCwd, pathToCheck))
+	const workspacePath = getWorkspacePath()
+	const resolvedPath = path.resolve(workspacePath, pathToCheck)
 
+	// using realpathSync to resolve any symbolic links
 	try {
-		normalizedCwd = realpathSync(normalizedCwd)
-		normalizedPath = realpathSync(normalizedPath)
+		const realWorkspacePath = realpathSync(workspacePath)
+		const realPath = realpathSync(resolvedPath)
+		return realPath.startsWith(realWorkspacePath)
 	} catch (error) {
 		console.error("Error resolving paths:", error)
 		return false
 	}
-	return normalizedPath.startsWith(normalizedCwd)
 }

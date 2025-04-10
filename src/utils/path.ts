@@ -123,6 +123,5 @@ export const isLocatedInWorkspace = (pathToCheck: string = ""): boolean => {
 		console.error("Error resolving paths:", error)
 		return false
 	}
-	let tempValue = normalizedPath.startsWith(normalizedCwd)
 	return normalizedPath.startsWith(normalizedCwd)
 }

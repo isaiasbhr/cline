@@ -349,13 +349,20 @@ export const ChatRowContent = ({
 	}, [message.ask, message.say, message.text])
 
 	if (tool) {
-		const toolIcon = (name: string) => (
+		const colorMap = {
+			red: "var(--vscode-errorForeground)",
+			yellow: "var(--vscode-editorWarning-foreground)",
+			green: "var(--vscode-charts-green)",
+		}
+
+		const toolIcon = (name: string, color?: string, title?: string) => (
 			<span
 				className={`codicon codicon-${name}`}
 				style={{
-					color: "var(--vscode-foreground)",
+					color: color ? colorMap[color as keyof typeof colorMap] || color : "var(--vscode-foreground)",
 					marginBottom: "-1.5px",
-				}}></span>
+				}}
+				title={title}></span>
 		)
 
 		switch (tool.tool) {
@@ -364,6 +371,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("edit")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>Cline wants to edit this file:</span>
 						</div>
 						<CodeAccordian
@@ -380,6 +389,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("new-file")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>Cline wants to create a new file:</span>
 						</div>
 						<CodeAccordian
@@ -396,6 +407,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("file-code")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>
 								{/* {message.type === "ask" ? "" : "Cline read this file:"} */}
 								Cline wants to read this file:
@@ -454,6 +467,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("folder-opened")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
 									? "Cline wants to view the top level files in this directory:"
@@ -474,6 +489,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("folder-opened")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
 									? "Cline wants to recursively view all files in this directory:"
@@ -494,6 +511,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("file-code")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
 									? "Cline wants to view source code definition names used in this directory:"
@@ -513,6 +532,8 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("search")}
+							{!tool.operationIsLocatedInWorkspace &&
+								toolIcon("sign-out", "yellow", "This file is outside the workspace")}
 							<span style={{ fontWeight: "bold" }}>
 								Cline wants to search this directory for <code>{tool.regex}</code>:
 							</span>

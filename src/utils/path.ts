@@ -1,6 +1,7 @@
 import * as path from "path"
 import os from "os"
 import * as vscode from "vscode"
+import { realpathSync } from "fs"
 
 /*
 The Node.js 'path' module resolves and normalizes paths differently depending on the platform:
@@ -109,4 +110,19 @@ export const getWorkspacePath = (defaultCwdPath = "") => {
 		return workspaceFolder?.uri.fsPath || cwdPath
 	}
 	return cwdPath
+}
+
+export const isLocatedInWorkspace = (pathToCheck: string = ""): boolean => {
+	let normalizedCwd: string = path.normalize(getWorkspacePath())
+	let normalizedPath: string = path.normalize(path.resolve(normalizedCwd, pathToCheck))
+
+	try {
+		normalizedCwd = realpathSync(normalizedCwd)
+		normalizedPath = realpathSync(normalizedPath)
+	} catch (error) {
+		console.error("Error resolving paths:", error)
+		return false
+	}
+	let tempValue = normalizedPath.startsWith(normalizedCwd)
+	return normalizedPath.startsWith(normalizedCwd)
 }

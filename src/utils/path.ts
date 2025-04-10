@@ -114,9 +114,15 @@ export const getWorkspacePath = (defaultCwdPath = ""): string => {
 
 export const isLocatedInWorkspace = (pathToCheck: string = ""): boolean => {
 	const workspacePath = getWorkspacePath()
+
+	// Handle long paths in Windows
+	if (pathToCheck.startsWith("\\\\?\\") || workspacePath.startsWith("\\\\?\\")) {
+		return pathToCheck.startsWith(workspacePath)
+	}
+
 	const resolvedPath = path.resolve(workspacePath, pathToCheck)
 
-	// using realpathSync to resolve any symbolic links
+	// Using realpathSync to resolve any symbolic links
 	try {
 		const realWorkspacePath = realpathSync(workspacePath)
 		const realPath = realpathSync(resolvedPath)
